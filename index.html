@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>College Student Details</title>
+<style>
+body{font-family:Arial; background:#f0f8ff; padding:20px;}
+h1{color:#333; text-align:center;}
+.card{background:white; padding:15px; margin:10px auto; width:300px; border-radius:10px; box-shadow:0 2px 5px gray;}
+input{width:90%; padding:8px; margin:5px;}
+button{padding:8px 15px; background:blue; color:white; border:none; border-radius:5px;}
+</style>
+</head>
+<body>
+<h1>CLG Student Details</h1>
+<div class="card">
+<input id="name" placeholder="Student Name">
+<input id="roll" placeholder="Roll No">
+<input id="branch" placeholder="Branch CSE/ECE">
+<button onclick="addStudent()">Add Student</button>
+</div>
+<div id="list"></div>
+
+<script>
+let students = [];
+function addStudent(){
+ let n=document.getElementById('name').value;
+ let r=document.getElementById('roll').value;
+ let b=document.getElementById('branch').value;
+ if(n==""){alert("Name enter chey"); return;}
+ students.push({name:n, roll:r, branch:b});
+ show();
+ document.getElementById('name').value="";
+ document.getElementById('roll').value="";
+ document.getElementById('branch').value="";
+}
+function show(){
+ let html="";
+ students.forEach(s=>{
+   html+=`<div class="card"><b>${s.name}</b><br>Roll: ${s.roll}<br>Branch: ${s.branch}</div>`;
+ });
+ document.getElementById('list').innerHTML=html;
+}
+</script>
+</body>
+</html>
