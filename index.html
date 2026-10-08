@@ -2,46 +2,61 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>College Student Details</title>
+<title>Student Portal</title>
 <style>
-body{font-family:Arial;background:#f0f2f5;padding:20px;margin:0}
-h2{text-align:center}
-.box{background:white;padding:20px;max-width:500px;margin:auto;border-radius:10px;box-shadow:0 0 10px #ccc}
-input{width:95%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:5px}
-button{background:#007bff;color:white;padding:12px;border:none;border-radius:5px;cursor:pointer;width:100%;margin-top:10px;font-size:16px}
-.card{background:#e9f5ff;padding:10px;margin:10px 0;border-radius:5px;border-left:4px solid #007bff}
+body{font-family:Arial;max-width:500px;margin:20px auto;padding:20px}
+input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ccc}
+button{background:#4285f4;color:white;border:none;font-weight:bold;cursor:pointer}
+.card{border:1px solid #ddd;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9}
 </style>
 </head>
 <body>
-<h2>CLG Student Details</h2>
-<div class="box">
+<h2>Student Management</h2>
+
+<h3>Add Student</h3>
 <input id="name" placeholder="Student Name">
 <input id="roll" placeholder="Roll No">
-<input id="branch" placeholder="Branch CSE/ECE">
+<input id="course" placeholder="Course">
 <button onclick="addStudent()">Add Student</button>
+<p id="msg"></p>
+
 <hr>
-<div id="list"></div>
-</div>
+<h3>All Students</h3>
+<button onclick="loadStudents()">Refresh List</button>
+<div id="list">Loading...</div>
+
 <script>
-let students = JSON.parse(localStorage.getItem("students")||"[]");
-function show(){
- let h="";
- for(let s of students){h+=`<div class=card><b>${s.name}</b><br>Roll: ${s.roll}<br>Branch: ${s.branch}</div>`;}
- document.getElementById("list").innerHTML=h;
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbxdzhrI_yoEzIL1MxoMT8sgD1XQjFbClhCA3MxH8R5cszo40H3uziqiZECjKUJI_e4x/exec";
+
 function addStudent(){
- let n=document.getElementById("name").value;
- let r=document.getElementById("roll").value;
- let b=document.getElementById("branch").value;
- if(!n){alert("Name enter chey");return;}
- students.push({name:n,roll:r,branch:b});
- localStorage.setItem("students",JSON.stringify(students));
- show();
- document.getElementById("name").value="";
- document.getElementById("roll").value="";
- document.getElementById("branch").value="";
+  document.getElementById('msg').innerText = "Saving...";
+  fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      name: document.getElementById('name').value,
+      roll: document.getElementById('roll').value,
+      course: document.getElementById('course').value
+    })
+  }).then(r=>r.json()).then(d=>{
+    document.getElementById('msg').innerText = "Saved Success!";
+    document.getElementById('name').value="";
+    document.getElementById('roll').value="";
+    document.getElementById('course').value="";
+    loadStudents();
+  }).catch(e=>{ document.getElementById('msg').innerText = "Error: " + e });
 }
-show();
+
+function loadStudents(){
+  document.getElementById('list').innerHTML = "Loading...";
+  fetch(API_URL).then(r=>r.json()).then(data=>{
+    let html="";
+    data.reverse().forEach(s=>{
+      html+=`<div class="card"><b>${s.name}</b><br>Roll: ${s.roll}<br>Course: ${s.course}</div>`;
+    });
+    document.getElementById('list').innerHTML = html || "No students yet";
+  });
+}
+loadStudents();
 </script>
 </body>
 </html>
