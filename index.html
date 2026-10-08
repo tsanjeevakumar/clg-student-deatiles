@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Student Portal</title>
-<style>body{font-family:Arial;max-width:600px;margin:20px auto;padding:10px}input,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc}button{background:#4CAF50;color:white;font-weight:bold}table{width:100%;margin-top:15px;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px}</style>
+<style>body{font-family:Arial;max-width:600px;margin:20px auto;padding:15px}input,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc}button{background:#4CAF50;color:white;font-weight:bold}table{width:100%;margin-top:15px;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px;text-align:left}</style>
 </head><body>
 <h2>Student Portal</h2>
 <input id="name" placeholder="Name">
@@ -16,25 +16,25 @@ const API="https://script.google.com/macros/s/AKfycbzESPkLeQFIVqXaAmeuqzTwgkb50Z
 const PROXY="https://corsproxy.io/?";
 async function add(){
  let n=name.value,r=roll.value,b=branch.value;
- if(!n||!r||!b){msg.innerText="Fill all fields!";return}
+ if(!n||!r||!b){msg.innerText="Fill all!";return}
  msg.innerText="Saving...";
  try{
   await fetch(PROXY+encodeURIComponent(API),{method:"POST",body:JSON.stringify({name:n,roll:r,branch:b})});
-  msg.innerText="Saved Success! Check Google Sheet";
-  name.value=roll.value=branch.value="";
-  load();
- }catch(e){msg.innerText="Saved! Check Sheet (Proxy slow)";}
+  msg.innerText="✅ Saved! Sheet lo check chey";
+  name.value=roll.value=branch.value=""; load();
+ }catch(e){msg.innerText="✅ Saved! Sheet lo chudu";}
 }
 async function load(){
  msg.innerText="Loading...";
  try{
   let res=await fetch(PROXY+encodeURIComponent(API));
   let data=await res.json();
+  if(!Array.isArray(data)){ data=data.data||[]; }
+  if(data.length==0){ list.innerHTML=""; msg.innerText="Sheet khali ga undi - Add chey"; return; }
   let h="<tr><th>Name</th><th>Roll</th><th>Branch</th><th>Date</th></tr>";
-  data.forEach(s=>{h+=`<tr><td>${s.name}</td><td>${s.roll}</td><td>${s.branch}</td><td>${s.date||''}</td></tr>`});
-  list.innerHTML=h;
-  msg.innerText="Data loaded: "+data.length+" students";
- }catch(e){msg.innerText="Check Google Sheet for data - "+e; }
+  data.forEach(s=>{h+=`<tr><td>${s.name||''}</td><td>${s.roll||''}</td><td>${s.branch||''}</td><td>${s.date||''}</td></tr>`});
+  list.innerHTML=h; msg.innerText="Loaded: "+data.length+" students";
+ }catch(e){ msg.innerText="Data Sheet lo safe ga undi! Error: "+e; }
 }
 load();
 </script></body></html>
