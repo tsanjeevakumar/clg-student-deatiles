@@ -1,62 +1,7 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Portal</title>
-<style>
-body{font-family:Arial;max-width:500px;margin:20px auto;padding:20px}
-input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ccc}
-button{background:#4285f4;color:white;border:none;font-weight:bold;cursor:pointer}
-.card{border:1px solid #ddd;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9}
-</style>
-</head>
-<body>
-<h2>Student Management</h2>
-
-<h3>Add Student</h3>
-<input id="name" placeholder="Student Name">
-<input id="roll" placeholder="Roll No">
-<input id="course" placeholder="Course">
-<button onclick="addStudent()">Add Student</button>
-<p id="msg"></p>
-
-<hr>
-<h3>All Students</h3>
-<button onclick="loadStudents()">Refresh List</button>
-<div id="list">Loading...</div>
-
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxdzhrI_yoEzIL1MxoMT8sgD1XQjFbClhCA3MxH8R5cszo40H3uziqiZECjKUJI_e4x/exec";
-
-function addStudent(){
-  document.getElementById('msg').innerText = "Saving...";
-  fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      name: document.getElementById('name').value,
-      roll: document.getElementById('roll').value,
-      course: document.getElementById('course').value
-    })
-  }).then(r=>r.json()).then(d=>{
-    document.getElementById('msg').innerText = "Saved Success!";
-    document.getElementById('name').value="";
-    document.getElementById('roll').value="";
-    document.getElementById('course').value="";
-    loadStudents();
-  }).catch(e=>{ document.getElementById('msg').innerText = "Error: " + e });
-}
-
-function loadStudents(){
-  document.getElementById('list').innerHTML = "Loading...";
-  fetch(API_URL).then(r=>r.json()).then(data=>{
-    let html="";
-    data.reverse().forEach(s=>{
-      html+=`<div class="card"><b>${s.name}</b><br>Roll: ${s.roll}<br>Course: ${s.course}</div>`;
-    });
-    document.getElementById('list').innerHTML = html || "No students yet";
-  });
-}
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Portal</title><style>body{font-family:Arial;max-width:500px;margin:20px auto;padding:20px}input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ccc}button{background:#4285f4;color:white;border:none;font-weight:bold}.card{border:1px solid #ddd;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9}</style></head><body><h2>Student Management</h2><input id="name" placeholder="Student Name" value="T Sanjeeva kumar"><input id="roll" placeholder="Roll No" value="24F6A05253"><input id="course" placeholder="Course" value="CSE"><button onclick="addStudent()">Add Student</button><p id="msg"></p><hr><h3>All Students</h3><button onclick="loadStudents()">Refresh List</button><div id="list">Loading...</div><script>
+const API_URL="https://script.google.com/macros/s/AKfycbxdzhrI_yoEzIL1MxoMT8sgD1XQjFbClhCA3MxH8R5cszo40H3uziqiZECjKUJI_e4x/exec";
+function addStudent(){document.getElementById('msg').innerText="Saving...";const data={name:document.getElementById('name').value,roll:document.getElementById('roll').value,course:document.getElementById('course').value};fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)}).then(()=>{document.getElementById('msg').innerText="Saved Success!";setTimeout(loadStudents,2000);});}
+function loadStudents(){document.getElementById('list').innerHTML="Loading...";const proxy="https://corsproxy.io/?"+encodeURIComponent(API_URL+"?t="+Date.now());fetch(proxy).then(r=>r.json()).then(data=>{let h="";data.reverse().forEach(s=>{h+=`<div class=card><b>${s.name}</b><br>Roll: ${s.roll}<br>Course: ${s.course}</div>`});document.getElementById('list').innerHTML=h||"No students";}).catch(()=>{document.getElementById('list').innerHTML="Data saved in Sheet";});}
 loadStudents();
-</script>
-</body>
-</html>
+</script></body></html>
