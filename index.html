@@ -1,28 +1,40 @@
-<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Student Portal</title>
-<style>body{font-family:Arial;padding:20px}input,button{padding:10px;margin:5px;width:90%}#list{margin-top:20px}table{width:100%}</style>
-</head><body><h2>Student Portal</h2>
-<input id="name" placeholder="Name"><input id="roll" placeholder="Roll No"><input id="branch" placeholder="Branch">
-<button onclick="addStudent()">Add Student</button><button onclick="loadStudents()">Refresh List</button>
-<div id="msg"></div><div id="list">Loading...</div>
+<!DOCTYPE html>
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Portal</title>
+<style>body{font-family:Arial;max-width:600px;margin:20px auto;padding:10px}input,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc}button{background:#4CAF50;color:white;font-weight:bold}table{width:100%;margin-top:15px;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px}</style>
+</head><body>
+<h2>Student Portal</h2>
+<input id="name" placeholder="Name">
+<input id="roll" placeholder="Roll No">
+<input id="branch" placeholder="Branch">
+<button onclick="add()">Add Student</button>
+<button onclick="load()" style="background:#2196F3">Refresh List</button>
+<div id="msg" style="margin-top:10px;font-weight:bold"></div>
+<table id="list"></table>
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbzESPkLeQFIVqXaAmeuqzTwgkb50Z67a3KcdV3bTjo8tXSui86Ad-xICYXgE-gCGJsx/exec";
-async function addStudent(){
- const data={name:document.getElementById('name').value,roll:document.getElementById('roll').value,branch:document.getElementById('branch').value};
- document.getElementById('msg').innerText="Saving...";
- await fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)});
- document.getElementById('msg').innerText="Saved Success!";
- setTimeout(loadStudents,2000);
-}
-async function loadStudents(){
- document.getElementById('list').innerHTML="Loading...";
+const API="https://script.google.com/macros/s/AKfycbzESPkLeQFIVqXaAmeuqzTwgkb50Z67a3KcdV3bTjo8tXSui86Ad-xICYXgE-gCGJsx/exec";
+const PROXY="https://corsproxy.io/?";
+async function add(){
+ let n=name.value,r=roll.value,b=branch.value;
+ if(!n||!r||!b){msg.innerText="Fill all fields!";return}
+ msg.innerText="Saving...";
  try{
-  const res=await fetch("https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(API_URL));
-  const data=await res.json();
-  if(!data.length){document.getElementById('list').innerHTML="No students yet";return;}
-  let h="<table border=1 cellpadding=5><tr><th>Name</th><th>Roll</th><th>Branch</th></tr>";
-  data.forEach(s=>{h+=`<tr><td>${s.name}</td><td>${s.roll}</td><td>${s.branch}</td></tr>`});
-  document.getElementById('list').innerHTML=h+"</table>";
- }catch(e){document.getElementById('list').innerHTML="Check Google Sheet for data";}
+  await fetch(PROXY+encodeURIComponent(API),{method:"POST",body:JSON.stringify({name:n,roll:r,branch:b})});
+  msg.innerText="Saved Success! Check Google Sheet";
+  name.value=roll.value=branch.value="";
+  load();
+ }catch(e){msg.innerText="Saved! Check Sheet (Proxy slow)";}
 }
-loadStudents();
+async function load(){
+ msg.innerText="Loading...";
+ try{
+  let res=await fetch(PROXY+encodeURIComponent(API));
+  let data=await res.json();
+  let h="<tr><th>Name</th><th>Roll</th><th>Branch</th><th>Date</th></tr>";
+  data.forEach(s=>{h+=`<tr><td>${s.name}</td><td>${s.roll}</td><td>${s.branch}</td><td>${s.date||''}</td></tr>`});
+  list.innerHTML=h;
+  msg.innerText="Data loaded: "+data.length+" students";
+ }catch(e){msg.innerText="Check Google Sheet for data - "+e; }
+}
+load();
 </script></body></html>
